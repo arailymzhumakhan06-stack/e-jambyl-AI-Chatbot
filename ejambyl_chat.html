@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>e-zhambyl AI chatbot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#f0f2f7;
+  --sidebar-bg:#f7f8fc;
+  --sidebar-border:#e2e5ef;
+  --main-bg:#f0f2f7;
+  --header-bg:#fff;
+  --card-bg:#fff;
+  --text:#1a1d2e;
+  --text-sub:#6b7280;
+  --text-light:#9ca3af;
+  --accent:#3b6ef6;
+  --accent-bg:#eef2ff;
+  --accent-light:#dbeafe;
+  --user-bubble:#fff;
+  --bot-bubble:#fff;
+  --input-bg:#fff;
+  --input-border:#e2e5ef;
+  --section-title:#374151;
+  --stat-bg:#f0f4ff;
+  --tag-blue:#3b6ef6;
+  --tag-text:#fff;
+  --divider:#e5e7eb;
+  --shadow:0 2px 12px rgba(59,110,246,0.07);
+  --shadow2:0 1px 4px rgba(0,0,0,0.08);
+}
+body.dark{
+  --bg:#0f1117;
+  --sidebar-bg:#161b27;
+  --sidebar-border:#232a3b;
+  --main-bg:#0f1117;
+  --header-bg:#161b27;
+  --card-bg:#1e2435;
+  --text:#e8eaf0;
+  --text-sub:#9ca3af;
+  --text-light:#6b7280;
+  --accent:#4f7bff;
+  --accent-bg:#1e2a4a;
+  --accent-light:#1e3a6e;
+  --user-bubble:#252d42;
+  --bot-bubble:#1e2435;
+  --input-bg:#1e2435;
+  --input-border:#2e3750;
+  --section-title:#9ca3af;
+  --stat-bg:#1a2035;
+  --divider:#232a3b;
+  --shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);display:flex;flex-direction:column;height:100vh;overflow:hidden;color:var(--text);transition:background 0.3s,color 0.3s;}
+
+/* TOP HEADER */
+.top-header{
+  background:var(--header-bg);
+  border-bottom:1px solid var(--divider);
+  padding:0 20px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-shrink:0;
+  transition:background 0.3s;
+}
+.th-logo{
+  width:34px;height:34px;
+  background:var(--accent-bg);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.th-logo svg{width:18px;height:18px;}
+.th-brand{display:flex;flex-direction:column;margin-right:8px;}
+.th-brand .name{font-size:15px;font-weight:700;color:var(--text);}
+.th-brand .sub{font-size:10.5px;color:var(--text-sub);}
+.th-spacer{flex:1;}
+.th-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--card-bg);
+  border:1px solid var(--divider);
+  border-radius:8px;
+  padding:6px 13px;
+  font-size:12.5px;color:var(--text);
+  cursor:pointer;transition:background 0.2s;
+  white-space:nowrap;
+}
+.th-btn:hover{background:var(--accent-bg);}
+.th-btn .dot{width:7px;height:7px;background:#10b981;border-radius:50%;}
+.th-stat-chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--stat-bg);
+  border:1px solid var(--accent-light);
+  border-radius:8px;
+  padding:5px 12px;
+  font-size:12px;color:var(--accent);font-weight:600;
+}
+.th-stat-chip .ic{font-size:14px;}
+.dark-toggle{
+  width:34px;height:34px;
+  background:var(--card-bg);
+  border:1px solid var(--divider);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;
+  transition:background 0.2s;
+}
+.dark-toggle:hover{background:var(--accent-bg);}
+
+/* BODY ROW */
+.body-row{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:230px;flex-shrink:0;
+  background:var(--sidebar-bg);
+  border-right:1px solid var(--sidebar-border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  transition:background 0.3s;
+}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--divider);border-radius:4px;}
+.sidebar-section{padding:16px 14px 8px;}
+.sidebar-section-title{
+  font-size:10.5px;font-weight:700;
+  color:var(--section-title);
+  text-transform:uppercase;letter-spacing:0.9px;
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:10px;
+}
+.sidebar-section-title::before{
+  content:'';display:block;width:10px;height:3px;
+  background:var(--accent);border-radius:2px;
+}
+.topic-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 11px;border-radius:9px;
+  font-size:13px;color:var(--text-sub);
+  cursor:pointer;transition:all 0.18s;
+  margin-bottom:2px;
+}
+.topic-item:hover{background:var(--accent-bg);color:var(--accent);}
+.topic-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600;}
+.topic-item .ti-icon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.sidebar-divider{height:1px;background:var(--divider);margin:8px 14px;}
+.stat-section{padding:12px 14px 16px;}
+.stat-big{
+  font-size:30px;font-weight:800;color:var(--accent);line-height:1;
+  margin-bottom:4px;
+}
+.stat-label{font-size:11px;color:var(--text-sub);margin-bottom:12px;}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--divider);font-size:12px;}
+.stat-row .sr-name{color:var(--text-sub);}
+.stat-row .sr-num{font-weight:700;color:var(--text);}
+
+/* MAIN */
+.chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* MESSAGES */
+.messages-area{
+  flex:1;overflow-y:auto;
+  padding:28px 32px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.messages-area::-webkit-scrollbar{width:5px;}
+.messages-area::-webkit-scrollbar-thumb{background:var(--divider);border-radius:4px;}
+
+/* WELCOME */
+.welcome-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;flex:1;padding:20px;
+  text-align:center;
+}
+.welcome-icon{
+  width:72px;height:72px;
+  background:var(--accent-bg);
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+}
+.welcome-icon svg{width:36px;height:36px;}
+.welcome-title{font-size:24px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.welcome-desc{font-size:13.5px;color:var(--text-sub);max-width:440px;line-height:1.65;margin-bottom:22px;}
+.quick-grid{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;max-width:520px;}
+.qb{
+  background:var(--card-bg);
+  border:1px solid var(--divider);
+  border-radius:10px;
+  padding:9px 16px;
+  font-size:12.5px;color:var(--text);
+  cursor:pointer;transition:all 0.18s;
+  box-shadow:var(--shadow2);
+}
+.qb:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+
+/* BUBBLES */
+.msg-row{display:flex;gap:10px;align-items:flex-end;max-width:680px;}
+.msg-row.user{flex-direction:row-reverse;margin-left:auto;}
+.msg-av{
+  width:32px;height:32px;border-radius:50%;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+}
+.msg-av.bot{background:var(--accent-bg);}
+.msg-av.bot svg{width:16px;height:16px;}
+.msg-av.user{background:var(--divider);color:var(--text);}
+.msg-wrap{display:flex;flex-direction:column;gap:3px;}
+.msg-row.user .msg-wrap{align-items:flex-end;}
+.msg-label{font-size:10.5px;color:var(--text-light);margin-bottom:2px;}
+.bubble{
+  padding:11px 16px;border-radius:14px;
+  font-size:13.5px;line-height:1.65;
+  white-space:pre-wrap;
+  box-shadow:var(--shadow2);
+  max-width:520px;
+}
+.bubble.bot{
+  background:var(--bot-bubble);
+  border:1px solid var(--divider);
+  border-bottom-left-radius:4px;
+  color:var(--text);
+}
+.bubble.user{
+  background:var(--accent);
+  color:#fff;
+  border-bottom-right-radius:4px;
+}
+.msg-time{font-size:10px;color:var(--text-light);}
+
+/* TYPING */
+.typing-row{display:flex;gap:10px;align-items:flex-end;}
+.typing-box{
+  background:var(--bot-bubble);border:1px solid var(--divider);
+  border-radius:14px;border-bottom-left-radius:4px;
+  padding:13px 16px;display:flex;gap:5px;align-items:center;
+  box-shadow:var(--shadow2);
+}
+.typing-box span{
+  width:7px;height:7px;background:#9ca3af;border-radius:50%;
+  animation:tb 1.2s infinite;
+}
+.typing-box span:nth-child(2){animation-delay:0.2s;}
+.typing-box span:nth-child(3){animation-delay:0.4s;}
+@keyframes tb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* SELECTED TOPIC TAG */
+.topic-tag-bar{
+  padding:6px 32px 0;
+  font-size:12px;color:var(--text-sub);
+  display:flex;align-items:center;gap:6px;
+}
+.topic-tag-bar .tt{
+  color:var(--accent);font-weight:600;
+}
+
+/* INPUT */
+.input-area{
+  background:var(--header-bg);
+  border-top:1px solid var(--divider);
+  padding:14px 32px 16px;
+  transition:background 0.3s;
+}
+.input-row{
+  display:flex;align-items:flex-end;gap:10px;
+}
+.input-box{
+  flex:1;
+  background:var(--input-bg);
+  border:1.5px solid var(--input-border);
+  border-radius:12px;
+  padding:11px 14px;
+  font-size:13.5px;
+  color:var(--text);
+  outline:none;
+  resize:none;
+  min-height:46px;
+  max-height:140px;
+  line-height:1.5;
+  transition:border-color 0.2s;
+  font-family:inherit;
+}
+.input-box:focus{border-color:var(--accent);}
+.input-box::placeholder{color:var(--text-light);}
+.input-icon-btn{
+  width:42px;height:42px;flex-shrink:0;
+  border:1.5px solid var(--input-border);
+  background:var(--input-bg);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;
+  transition:all 0.2s;color:var(--text-sub);
+}
+.input-icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+.send-btn{
+  width:42px;height:42px;flex-shrink:0;
+  background:var(--accent);
+  border:none;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+.send-btn:hover{background:#2563eb;}
+.send-btn:disabled{background:#9ca3af;cursor:not-allowed;}
+.send-btn svg{width:18px;height:18px;}
+.input-hint{font-size:11px;color:var(--text-light);margin-top:8px;text-align:center;}
+
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .messages-area{padding:16px;}
+  .topic-tag-bar{padding:6px 16px 0;}
+  .input-area{padding:12px 16px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header class="top-header">
+  <div class="th-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+    </svg>
+  </div>
+  <div class="th-brand">
+    <span class="name">e-zhambyl AI chatbot</span>
+    <span class="sub">Қазақстан заңнамасы мен мемлекеттік қызметтер бойынша ЖИ-кеңесші</span>
+  </div>
+  <div class="th-spacer"></div>
+  <button class="th-btn" id="guestBtn" onclick="toggleGuest()">
+    <span id="guestIcon">👤</span>
+    <span id="guestLabel">Қонақ режимі</span>
+  </button>
+  <div class="th-stat-chip">
+    <span class="ic">📋</span>
+    <span id="statChip">1146 деректер жазбасы</span>
+  </div>
+  <div class="dark-toggle" onclick="toggleDark()" title="Тема ауыстыру">
+    <span id="darkIcon">🌙</span>
+  </div>
+</header>
+
+<!-- BODY -->
+<div class="body-row">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Тақырып таңдау</div>
+      <div class="topic-item active" onclick="selectTopic(this,'Барлық тақырыптар')">
+        <span class="ti-icon">🔵</span> Барлық тақырыптар
+      </div>
+      <div class="topic-item" onclick="selectTopic(this,'e-jambyl.kz платформасы')">
+        <span class="ti-icon">🌐</span> e-jambyl.kz платформасы
+      </div>
+      <div class="topic-item" onclick="selectTopic(this,'Отбасы банкі / Әулиеата жастары')">
+        <span class="ti-icon">🏠</span> Отбасы банкі / Әулиеата жастары
+      </div>
+      <div class="topic-item" onclick="selectTopic(this,'ҚР Жер кодексі')">
+        <span class="ti-icon">📘</span> ҚР Жер кодексі
+      </div>
+      <div class="topic-item" onclick="selectTopic(this,'ҚР Жер қойнауы кодексі')">
+        <span class="ti-icon">📗</span> ҚР Жер қойнауы кодексі
+      </div>
+      <div class="topic-item" onclick="selectTopic(this,'ҚР Әлеуметтік кодекс')">
+        <span class="ti-icon">📙</span> ҚР Әлеуметтік кодекс
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="stat-section">
+      <div class="sidebar-section-title">Деректқор статистикасы</div>
+      <div class="stat-big">1146</div>
+      <div class="stat-label">Жалпы сұрақ-жауап жұптары</div>
+      <div class="stat-row"><span class="sr-name">e-jambyl.kz</span><span class="sr-num">31</span></div>
+      <div class="stat-row"><span class="sr-name">Отбасы банкі</span><span class="sr-num">31</span></div>
+      <div class="stat-row"><span class="sr-name">Жер кодексі</span><span class="sr-num">222</span></div>
+      <div class="stat-row"><span class="sr-name">Жер қойнауы</span><span class="sr-num">46</span></div>
+      <div class="stat-row"><span class="sr-name">Әлеуметтік кодекс</span><span class="sr-num">816</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN CHAT -->
+  <main class="chat-main">
+    <div class="messages-area" id="messagesArea">
+      <!-- welcome rendered by JS -->
+    </div>
+
+    <div class="topic-tag-bar">
+      🚀 Таңдалған тақырып: <span class="tt" id="topicTag">Барлық тақырыптар</span>
+    </div>
+
+    <div class="input-area">
+      <div class="input-row">
+        <textarea class="input-box" id="userInput" rows="1"
+          placeholder="Сұрақ жазыңыз... (Enter — жіберу, Shift+Enter — жол)"
+          oninput="autoResize(this)"></textarea>
+        <div class="input-icon-btn" onclick="clearChat()" title="Тазалау">🗑️</div>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Жіберу">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+var isDark = false;
+var isGuest = true;
+var currentTopic = 'Барлық тақырыптар';
+var msgCount = 0;
+
+// ── ICON SVG helper ──
+function botSvg(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>';
+}
+
+// ── DARK MODE ──
+function toggleDark(){
+  isDark = !isDark;
+  document.body.classList.toggle('dark', isDark);
+  document.getElementById('darkIcon').textContent = isDark ? '☀️' : '🌙';
+}
+
+// ── GUEST TOGGLE ──
+function toggleGuest(){
+  isGuest = !isGuest;
+  document.getElementById('guestLabel').textContent = isGuest ? 'Қонақ режимі' : 'Жүйеге кірілді';
+  document.getElementById('guestIcon').textContent = isGuest ? '👤' : '✅';
+}
+
+// ── TOPIC SELECT ──
+function selectTopic(el, name){
+  document.querySelectorAll('.topic-item').forEach(function(i){ i.classList.remove('active'); });
+  el.classList.add('active');
+  currentTopic = name;
+  document.getElementById('topicTag').textContent = name;
+}
+
+// ── AUTO RESIZE TEXTAREA ──
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+
+// ── TIME ──
+function getTime(){
+  var n = new Date();
+  return n.getHours().toString().padStart(2,'0') + ':' + n.getMinutes().toString().padStart(2,'0');
+}
+
+// ── WELCOME ──
+function renderWelcome(){
+  var area = document.getElementById('messagesArea');
+  area.innerHTML = '';
+  msgCount = 0;
+  var wrap = document.createElement('div');
+  wrap.className = 'welcome-wrap';
+  wrap.id = 'welcomeWrap';
+  wrap.innerHTML =
+    '<div class="welcome-icon">'+botSvg()+'</div>'+
+    '<div class="welcome-title">Сәлем!</div>'+
+    '<div class="welcome-desc">Қазақстан Республикасының заңнамасы, Жамбыл облысының цифрлық платформалары және мемлекеттік бағдарламалар бойынша кеңес бере аламын.</div>'+
+    '<div class="quick-grid" id="quickGrid"></div>';
+  area.appendChild(wrap);
+
+  var qs = [
+    'Жер кодексінің 1-бабы нені реттейді?',
+    '«Әулиеата жастары» бағдарламасы дегенімізе не?',
+    'e-jambyl.kz платформасы нені ұсынады?',
+    'Жер қойнауын пайдаланушының құқықтары?',
+    'Социальный кодекс что регулирует?'
+  ];
+  var grid = document.getElementById('quickGrid');
+  qs.forEach(function(q){
+    var b = document.createElement('button');
+    b.className = 'qb';
+    b.textContent = q;
+    b.onclick = function(){ quickSend(q); };
+    grid.appendChild(b);
+  });
+}
+
+// ── REMOVE WELCOME ──
+function removeWelcome(){
+  var w = document.getElementById('welcomeWrap');
+  if(w) w.remove();
+}
+
+// ── APPEND MESSAGE ──
+function appendMsg(text, who){
+  removeWelcome();
+  var area = document.getElementById('messagesArea');
+  var row = document.createElement('div');
+  row.className = 'msg-row ' + who;
+
+  var av = document.createElement('div');
+  av.className = 'msg-av ' + who;
+  if(who === 'bot') av.innerHTML = botSvg();
+  else av.textContent = '👤';
+
+  var wrap = document.createElement('div');
+  wrap.className = 'msg-wrap';
+
+  var label = document.createElement('div');
+  label.className = 'msg-label';
+  label.textContent = who === 'bot' ? 'ЖИ жауабы' : '';
+
+  var bub = document.createElement('div');
+  bub.className = 'bubble ' + who;
+  bub.textContent = text;
+
+  var time = document.createElement('div');
+  time.className = 'msg-time';
+  time.textContent = getTime();
+
+  if(who === 'bot') wrap.appendChild(label);
+  wrap.appendChild(bub);
+  wrap.appendChild(time);
+  row.appendChild(av);
+  row.appendChild(wrap);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+}
+
+// ── TYPING ──
+function showTyping(){
+  removeWelcome();
+  var area = document.getElementById('messagesArea');
+  var row = document.createElement('div');
+  row.className = 'typing-row';
+  row.id = 'typingRow';
+  var av = document.createElement('div');
+  av.className = 'msg-av bot';
+  av.innerHTML = botSvg();
+  var box = document.createElement('div');
+  box.className = 'typing-box';
+  box.innerHTML = '<span></span><span></span><span></span>';
+  row.appendChild(av);
+  row.appendChild(box);
+  area.appendChild(row);
+  area.scrollTop = area.scrollHeight;
+}
+function hideTyping(){
+  var r = document.getElementById('typingRow');
+  if(r) r.remove();
+}
+
+// ── REPLIES ──
+var replies = {
+  '109':      'Жамбыл облысының 109 бірыңғай байланыс орталығы азаматтардың өтініштерін тәулік бойы, аптасына 7 күн қабылдайды.\n\n• Өтінімді онлайн жіберуге болады\n• Шағымның мәртебесін нақты уақытта бақылау мүмкіндігі бар\n• Орташа қарау мерзімі — 15 жұмыс күні\n\nОнлайн өтінім беру үшін e-jambyl.kz порталындағы «Өтініштер» бөліміне өтіңіз немесе 109 нөміріне қоңырау шалыңыз.',
+  'жалоба':   'Шағым беру үшін e-jambyl.kz порталына кіріп, «Өтініштер» бөлімін таңдаңыз. Сонымен қатар 109 контакт-орталығына қоңырау шала аласыз.',
+  'камер':    '«Қауіпсіз қала» жобасы:\n\n• Облыс бойынша 72 785 белсенді бейнекамера орнатылған\n• Жүйе тәулік бойы жұмыс істейді\n• Деректер e-Jambyl платформасымен біріктірілген\n• Көшелер, мектептер, қоғамдық орындар қамтылған',
+  'безопасн': '«Қауіпсіз қала» бағдарламасы аясында облыста 72 785 бейнекамера орнатылған. Жүйе 24/7 режимінде жұмыс жасап, автоматты тану технологиясын пайдаланады.',
+  'автобус':  'Тараз қаласының ақылды қоғамдық көлік жүйесі:\n\n• Барлық автобустар GPS-трекерлермен жабдықталған\n• Нақты уақыттағы кесте e-Jambyl мобильді қосымшасында қол жетімді\n• Бірыңғай жанасусыз төлем картасы қолданылады',
+  'транспорт':'Тараз қаласы бойынша қоғамдық көліктің толық кестесін e-jambyl.kz порталының «Көлік» бөлімінен немесе мобильді қосымшадан таба аласыз.',
+  'жер код':  'ҚР Жер кодексі жер қатынастарын, жер учаскелерінің меншігін, пайдалану мен қорғауды реттейді. Кодекстің 1-бабы жер заңнамасының мақсаттарын белгілейді.',
+  'әлеумет':  'ҚР Әлеуметтік кодексі 2023 жылы қабылданды. Ол еңбек қатынастарын, зейнетақы жүйесін, мүгедектік мәселелерін және әлеуметтік қорғауды кешенді реттейді.',
+  'отбасы':   '«Отбасы банкі» — мемлекеттік ипотека операторы. «Әулиеата жастары» бағдарламасы Жамбыл облысының жастарына қолайлы шарттармен тұрғын үй алуға мүмкіндік береді.',
+  'e-jambyl': 'e-jambyl.kz платформасы Жамбыл облысының цифрлық қызметтер порталы болып табылады. Онда мемлекеттік қызметтерге өтінім беру, байланыс орталығы, транспорт кестесі және «Қауіпсіз қала» жүйесіне қатынас бар.',
+  'платформ': 'e-jambyl.kz — Жамбыл облысының бірыңғай цифрлық платформасы. Мемлекеттік қызметтер, өтінімдер, GPS-көлік, бейнебақылау жүйесі және азаматтарға арналған сервистер қол жетімді.'
+};
+
+function getReply(msg){
+  var m = msg.toLowerCase();
+  for(var key in replies){
+    if(m.indexOf(key) !== -1) return replies[key];
+  }
+  if(isGuest && msgCount >= 3){
+    return '❌ Қате: Қонақ режимі үшін лимит таусылды! 2 секундтан кейін қайта көріңіз немесе шектеусіз қолдану үшін Жүйеге ЭЦҚ арқылы кіріңіз.';
+  }
+  return 'Сіздің сұрағыңызды қабылдадым. Қазіргі уақытта e-Jambyl деректқоры бойынша жауап іздеудемін.\n\nТолық жауап алу үшін сұрақты нақтырақ қойыңыз немесе мына тақырыптарды таңдаңыз:\n\n• Жер кодексі\n• Әлеуметтік кодекс\n• e-jambyl.kz платформасы\n• Отбасы банкі / Әулиеата жастары';
+}
+
+// ── SEND ──
+function sendMessage(){
+  var inp = document.getElementById('userInput');
+  var btn = document.getElementById('sendBtn');
+  var text = inp.value.trim();
+  if(!text) return;
+
+  appendMsg(text, 'user');
+  msgCount++;
+  inp.value = '';
+  inp.style.height = 'auto';
+  btn.disabled = true;
+
+  var reply = getReply(text);
+  showTyping();
+
+  setTimeout(function(){
+    hideTyping();
+    appendMsg(reply, 'bot');
+    btn.disabled = false;
+    inp.focus();
+  }, 1000 + Math.random()*600);
+}
+
+function quickSend(q){
+  document.getElementById('userInput').value = q;
+  sendMessage();
+}
+
+function clearChat(){
+  renderWelcome();
+}
+
+// ── ENTER KEY ──
+document.addEventListener('DOMContentLoaded', function(){
+  renderWelcome();
+  document.getElementById('userInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+});
+</script>
+</body>
+</html>
